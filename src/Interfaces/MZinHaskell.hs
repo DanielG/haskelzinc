@@ -40,7 +40,7 @@ testModelWithData
               -- choco3)
   -> Int      -- ^ Number of solutions to be returned
   -> IO (Either ParseError [Solution])
-testModelWithData model mdata path solver num = 
+testModelWithData model mdata path solver num =
   let fdata = [Comment "Model\'s data"] ++ mdata ++ [Empty]
   in testModel (fdata ++ model) path solver num
 

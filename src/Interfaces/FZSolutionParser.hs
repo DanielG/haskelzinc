@@ -93,7 +93,7 @@ solutions :: Parser [Solution]
 solutions = manyTill solution (string "==========" >> endOfLine)
 
 solution :: Parser [(String, MValue)]
-solution = (many $ (skipMany comment) *> (assigned >>= return)) 
+solution = (many $ (skipMany comment) *> (assigned >>= return))
                    <* string "----------" <* endOfLine
 
 comment :: Parser String
@@ -139,7 +139,7 @@ float = do
   ipart <- many1 digit
   char '.'
   dpart <- many1 digit
-  let a = read (ipart ++ "." ++ dpart) :: Float in 
+  let a = read (ipart ++ "." ++ dpart) :: Float in
     return a
 
 set :: Parser a -> Parser [a]
@@ -156,7 +156,7 @@ array :: Parser MValue -> Parser MValue
 array p = do
   string "array"
   manyTill anyChar (char '(')
-  ls <- arraySizes 
+  ls <- arraySizes
   es <- extract p
   string ")"
   return (fixDims ls es)
@@ -174,7 +174,7 @@ digitValue = do
 
 ascendDecimal :: Parser (Int -> Int -> Int)
 ascendDecimal = do
-  return $ \x y -> x*10 + y  
+  return $ \x y -> x*10 + y
 
 indexRange :: Parser Int
 indexRange = do
@@ -182,7 +182,7 @@ indexRange = do
   string ".."
   b <- int
   return (b - a + 1)
-  
+
 arraySizes :: Parser [Int]
 arraySizes = P.sepEndBy1 indexRange (string "," >> spaces)
 

@@ -22,9 +22,9 @@ import qualified Text.Parsec as P
 import qualified Text.Parsec.Char as C
 import qualified Text.Parsec.Combinator as C1
 
-data Configuration 
 -- | A record containing the required paths for the constraint models to be run
 -- by the solvers.
+data Configuration
   = Config { minizinc    :: FilePath -- ^ Path to @mzn2fzn@ and @flatzinc@
                                      -- executables
            , chocosolver :: FilePath -- ^ Path to the choco_solver java library
@@ -39,8 +39,8 @@ instance Monoid Configuration where
                   , chocoparser = ""
                   , antlr_path = ""
                   }
-   
-  mappend a b = 
+
+  mappend a b =
     Config { minizinc    = dropEmpty (minizinc a) (minizinc b)
            , chocosolver = dropEmpty (chocosolver a) (chocosolver b)
            , chocoparser = dropEmpty (chocoparser a) (chocoparser b)
@@ -96,7 +96,7 @@ emptyConf = Config { minizinc    = ""
                    , chocoparser = ""
                    , antlr_path  = ""
                    }
-                
+
 confFile = joinPath ["HZconf", "conf.txt"]
 -- /Definitions
 
@@ -113,7 +113,7 @@ parserLine = do
   C.spaces
   right <- parserr
   return (left,right)
-  
+
 parserr :: Parser String
 parserr = manyTill anyChar eof
 
@@ -131,7 +131,7 @@ runParser p = P.parse (p <* eof) ""
 parseWithLeftOver :: Parser a -> String -> Either P.ParseError (a,String)
 parseWithLeftOver p = P.parse ((,) <$> p <*> leftOver) ""
   where leftOver = manyTill anyToken eof
-  
+
 -- Needed definitions
 manyTill = C1.manyTill
 try = P.try

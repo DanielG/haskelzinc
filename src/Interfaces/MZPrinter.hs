@@ -21,14 +21,14 @@ module Interfaces.MZPrinter(
 import Text.PrettyPrint
 import Data.List
 import Interfaces.MZAST
-  
+
 -- | Prints the represented MiniZinc model. Essentially, this function applies
 -- 'printItem' on each element of the specified model.
 printModel :: MZModel -> Doc
 printModel = foldl1 ($+$) . map printItem
 
 -- | Prints an item of the represented model. Example:
--- 
+--
 -- >>> printItem $ Pred "even" [(Dec, Int, "x")] (Just (Bi Eq (Bi Mod (Var "x") (IConst 2)) (IConst 0)))
 -- predicate even(var int: x) =
 --   x mod 2 = 0;
@@ -46,21 +46,21 @@ printItem (Constraint c)            = text "constraint" <+> printExpr c <> semi
 printItem (Assign var expr)         = text var <+> equals <+> printExpr expr <> semi
 printItem (Output e)                = text "output" <+> printExpr e <> semi
 printItem (Solve s)                 = text "solve" <+> printSolve s <> semi
-printItem (Pred name ps me)         = case me of 
+printItem (Pred name ps me)         = case me of
                                         Nothing -> text "predicate" <+> text name <> parens (commaSep printParam ps) <> semi
                                         Just e  -> text "predicate" <+> text name <> parens (commaSep printParam ps) <+> equals $+$ nest 2 (printExpr e) <> semi
-printItem (Test name ps me)         = case me of 
+printItem (Test name ps me)         = case me of
                                         Nothing -> text "test" <+> text name <> parens (commaSep printParam ps) <> semi
                                         Just e  -> text "test" <+> text name <> parens (commaSep printParam ps) <+> equals $+$ nest 2 (printExpr e) <> semi
-printItem (Function ti name ps me)  = case me of 
+printItem (Function ti name ps me)  = case me of
                                         Nothing -> text "function" <+> printTypeInst ti <> colon <+> text name <> parens (commaSep printParam ps) <> semi
                                         Just e  -> text "function" <+> printTypeInst ti <> colon <+> text name <> parens (commaSep printParam ps) <+> equals $+$ nest 2 (printExpr e) <> semi
 
 -- | Prints the represented MiniZinc expressions of a model. Examples:
--- 
+--
 -- >>> printExpr $ SetComp (Bi Times (IConst 2) (Var "i")) ([(["i"], Interval (IConst 1) (IConst 5))], Nothing)
 -- {2 * i | i in 1..5}
--- 
+--
 -- >>> printExpr $ Let [Declare Dec Int "x" (Just (IConst 3)), Declare Dec Int "y" (Just (IConst 4))] (Bi BPlus (Var "x") (Var "y"))
 -- let {var int: x = 3;
 --      var int: y = 4;}
@@ -84,10 +84,10 @@ printExpr (ArrayElem v es)    = text v <> brackets (commaSepExpr es)
 printExpr (U op e)            = printUop op <+> (if isAtomic e then printExpr e else parens (printExpr e))
 printExpr (Bi op e1 e2)       = printParensExpr (prec op) e1 <+> printBop op <+> printParensExpr (prec op) e2
 printExpr (Call f es)         = printFunc f <> parens (commaSepExpr es)
-printExpr (ITE [(e1, e2)] e3) = text "if" <+> printExpr e1 <+> text "then" <+> printExpr e2 
+printExpr (ITE [(e1, e2)] e3) = text "if" <+> printExpr e1 <+> text "then" <+> printExpr e2
                                 $+$ text "else" <+> printExpr e3 <+> text "endif"
-printExpr (ITE (te:tes) d)    = text "if" <+> printExpr (fst te) <+> text "then" <+> printExpr (snd te) 
-                                $+$ printEITExpr tes 
+printExpr (ITE (te:tes) d)    = text "if" <+> printExpr (fst te) <+> text "then" <+> printExpr (snd te)
+                                $+$ printEITExpr tes
                                 $+$ text "else" <+> printExpr d <+> text "endif"
 printExpr (Let is e)          = text "let" <+> braces (nest 4 (vcat (map printItem is))) $+$ text "in" <+> printExpr e
 printExpr (GenCall f ct e)    = printFunc f <> parens (printCompTail ct)
@@ -106,10 +106,10 @@ printParensExpr _ e@(U _ ue) = if isAtomic ue then printExpr ue else parens (pri
 printParensExpr _ e = printExpr e
 
 prec :: Bop -> Int
-prec LRarrow  = 7 
+prec LRarrow  = 7
 prec Rarrow   = 7
 prec Larrow   = 7
-prec And      = 7 
+prec And      = 7
 prec Or       = 7
 prec Eqq      = 8
 prec Neq      = 8

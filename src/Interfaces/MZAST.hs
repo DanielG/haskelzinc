@@ -63,7 +63,7 @@ module Interfaces.MZAST (
   Param,
   Ident,
   Filename
-) where 
+) where
 
 -- | An abbreviation for the type of a represented MiniZinc model.
 type MZModel = [Item]
@@ -75,7 +75,7 @@ type MZModel = [Item]
   empty lines as items, and from using 3 distinct Item constructors for
   representing user defined calls (predicates, tests and functions).
 -}
-data Item 
+data Item
   -- | Commented line
   = Comment String
   -- | Include item
@@ -110,7 +110,7 @@ data Item
   -- | Annotation item. Use of annotations is not supported yet.
   | Annotation
   -- | Represents an empty line in the MiniZinc model.
-  | Empty        
+  | Empty
   deriving Eq
 
 -- | The type of a MiniZinc expression's representation.
@@ -198,9 +198,9 @@ data VarType
   | Any
   deriving Eq
 
-data Bop 
 -- | The type of MiniZinc binary operators' representation. Next to each
 -- constructor is indicated the operator it represents.
+data Bop
   -- Comparison
   = Gt  -- ^ @>@
   | Lt  -- ^ @<@
@@ -209,7 +209,7 @@ data Bop
   | Eqq -- ^ @==@
   | Eq  -- ^ @=@
   | Neq -- ^ @!=@
-  
+
   -- Arithmetic
   | BPlus   -- ^ @+@
   | BMinus  -- ^ @-@
@@ -217,24 +217,24 @@ data Bop
   | Div     -- ^ @/@
   | IDiv    -- ^ @div@
   | Mod     -- ^ @mod@
-  
+
   -- Logical
   | LRarrow -- ^ @\<-\>@
   | Rarrow  -- ^ @->@
   | Larrow  -- ^ @<-@
   | And     -- ^ @\/\\@
   | Or      -- ^ @\\\/@
-  
+
   -- Sets
   | In      -- ^ @in@
   | Sub     -- ^ @subset@
   | Super   -- ^ @superset@
   | Union   -- ^ @union@
   | Inters  -- ^ @intersect@
-  
+
   -- Arrays
   | Concat  -- ^ @++@
-  
+
   -- Misc
   | Diff    -- ^ @diff@
   | SDiff   -- ^ @symdiff@
@@ -242,9 +242,9 @@ data Bop
   | AsFunc Bop
   deriving Eq
 
-data Uop 
 -- | Represents MiniZinc unary operators. Next to each constructor is indicated
 -- the operator it represents.
+data Uop
   = Not     -- ^ @not@
   | UPlus   -- ^ @+@
   | UMinus  -- ^ @-@
@@ -361,7 +361,7 @@ data Solve
 type CompTail = ([Generator], Maybe Expr)
 
 type Generator = ([Ident], Expr)
- 
+
 type TypeInst = (Inst, VarType)
 
 type Param = (Inst, VarType, Ident)
