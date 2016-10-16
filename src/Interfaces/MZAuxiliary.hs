@@ -22,10 +22,11 @@ import qualified Text.Parsec as P
 import qualified Text.Parsec.Char as C
 import qualified Text.Parsec.Combinator as C1
 
--- | A record containing the required paths for the constraint models to be run by
--- the solvers.
 data Configuration 
-  = Config { minizinc    :: FilePath -- ^ Path to @mzn2fzn@ and @flatzinc@ executables
+-- | A record containing the required paths for the constraint models to be run
+-- by the solvers.
+  = Config { minizinc    :: FilePath -- ^ Path to @mzn2fzn@ and @flatzinc@
+                                     -- executables
            , chocosolver :: FilePath -- ^ Path to the choco_solver java library
            , chocoparser :: FilePath -- ^ Path to the choco_parser java library
            , antlr_path  :: FilePath -- ^ Path to the antlr java library

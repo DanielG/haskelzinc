@@ -7,14 +7,17 @@ License     : GPL-3
 Maintainer  : Klara Marntirosian <klara.mar@cs.kuleuven.be>
 Stability   : experimental
 
-This module provides an interface of the MiniZinc 2.0 language in Haskell through the definition of an abstract syntax tree of the MiniZinc language.
-With the use of this module, one can represent MiniZinc models in Haskell code. The abstract syntax tree is based on 
-<http://www.minizinc.org/2.0/doc-lib/minizinc-spec.pdf the MiniZinc 2.0 spesification>. 
+This module provides an interface of the MiniZinc 2.0 language in Haskell
+through the definition of an abstract syntax tree of the MiniZinc language.
+With the use of this module, one can represent MiniZinc models in Haskell
+code. The abstract syntax tree is based on
+<http://www.minizinc.org/2.0/doc-lib/minizinc-spec.pdf the MiniZinc 2.0 spesification>.
 
-However, the module does not check semantical correctness of the represented model.
-For example, it does not detect typos in the use of previously declared identifiers.
+However, the module does not check semantical correctness of the represented
+model.  For example, it does not detect typos in the use of previously declared
+identifiers.
 
-=== Featrues not supported yet
+=== Features not supported yet
  - Annotations
 -}
 
@@ -66,38 +69,43 @@ module Interfaces.MZAST (
 type MZModel = [Item]
 
 {-|
-  The type of a MiniZinc's top-level program item representation. MiniZinc defines 8 kinds of
-  items. This module defines a representation for 12 kinds of items. The additional 4 come from 
-  representing MiniZinc commented lines and empty lines as items, and from using 3 distinct Item
-  constructors for representing user defined calls (predicates, tests and functions).
+  The type of a MiniZinc's top-level program item representation. MiniZinc
+  defines 8 kinds of items. This module defines a representation for 12 kinds of
+  items. The additional 4 come from representing MiniZinc commented lines and
+  empty lines as items, and from using 3 distinct Item constructors for
+  representing user defined calls (predicates, tests and functions).
 -}
 data Item 
   -- | Commented line
   = Comment String
   -- | Include item
   | Include Filename
-  -- | Variable declaration item.
-  -- The value @Declare i t name maybe_exp@ represents the declaration a variable named @name@ of type @t@ and inst @i@. 
-  -- Use @Just expression@ in place of @maybe_exp@ to represent the value that initializes the declared 
-  -- variable. Use @Nothing@ in place of @maybe_exp@ to represent a variable declaration without initialization.
+  -- | Variable declaration item. The value @Declare i t name maybe_exp@
+  -- represents the declaration a variable named @name@ of type @t@ and inst
+  -- @i@.  Use @Just expression@ in place of @maybe_exp@ to represent the value
+  -- that initializes the declared variable. Use @Nothing@ in place of
+  -- @maybe_exp@ to represent a variable declaration without initialization.
   | Declare TypeInst Ident (Maybe Expr)
-  -- | Assignment item. @Assign name exp@ represents the assignment of @exp@ to the variable @name@.
+  -- | Assignment item. @Assign name exp@ represents the assignment of @exp@ to
+  -- the variable @name@.
   | Assign Ident Expr
   -- | Constraint item
   | Constraint Expr
   -- | Solve item
   | Solve Solve
-  -- | Output item. The use of this item might cause errors in parsing the solution(s) of the model.
-  -- Recommended use for testing purposes only.
+  -- | Output item. The use of this item might cause errors in parsing the
+  -- solution(s) of the model. Recommended use for testing purposes only.
   | Output Expr
-  -- | User-defined predicate. @Pred name args exp@ represents the MiniZinc definition of a predicate 
-  -- called @name@, the parameters of which are the elements of the @args@ list. @exp@ represents the
-  -- optional body of the predicate.
+  -- | User-defined predicate. @Pred name args exp@ represents the MiniZinc
+  -- definition of a predicate called @name@, the parameters of which are the
+  -- elements of the @args@ list. @exp@ represents the optional body of the
+  -- predicate.
   | Pred Ident [Param] (Maybe Expr)
   -- | User-defined test. Syntax similar to the @Pred@ constructor.
   | Test Ident [Param] (Maybe Expr)
-  -- | User-defined function. Syntax similar to @Pred@ and @Test@ constructors. The additional @TypeInst@
-  -- represents the type of the returning value of the function and the inst of the function.
+  -- | User-defined function. Syntax similar to @Pred@ and @Test@
+  -- constructors. The additional @TypeInst@ represents the type of the
+  -- returning value of the function and the inst of the function.
   | Function TypeInst Ident [Param] (Maybe Expr)
   -- | Annotation item. Use of annotations is not supported yet.
   | Annotation
@@ -122,38 +130,48 @@ data Expr
   -- | MiniZinc arrays constructed with the MiniZinc @..@ operator.
   -- @Interval a b@ translates to @[a .. b]@.
   | Interval Expr Expr
-  -- | @SetLit literals@ translates to a MiniZinc set the elements of which are the represented expressions in
-  -- the @literals@ list.
+  -- | @SetLit literals@ translates to a MiniZinc set the elements of which are
+  -- the represented expressions in the @literals@ list.
   | SetLit [Expr]
-  -- | MiniZinc set comprehension. The first argument of the constructor represents the head
-  -- expression of the comprehension, while the second represents the comprehension tail.
+  -- | MiniZinc set comprehension. The first argument of the constructor
+  -- represents the head expression of the comprehension, while the second
+  -- represents the comprehension tail.
   | SetComp Expr CompTail
-  -- | MiniZinc 1-dimensional arrays defined with literals, similar to the @SetLit@ constructor.
+  -- | MiniZinc 1-dimensional arrays defined with literals, similar to the
+  -- @SetLit@ constructor.
   | ArrayLit [Expr]
   -- | MiniZinc 2-dimensional arrays defined with literals
   | ArrayLit2D [[Expr]]
   -- | MiniZinc array comprehension. Syntax similar to @SetComp@ constructor.
   | ArrayComp Expr CompTail
-  -- | Represents an array element. In @ArrayElem name is@, the argument @name@ is the identifier of the array and @is@ is
-  -- the list of indexes that specify the desired element. The length of @is@ must be equal to the number of 
+  -- | Represents an array element. In @ArrayElem name is@, the argument @name@
+  -- is the identifier of the array and @is@ is the list of indexes that specify
+  -- the desired element. The length of @is@ must be equal to the number of
   -- dimensions of the array.
   | ArrayElem Ident [Expr]
-  -- | @Bi op exp1 exp2@ represents the MiniZinc expression that applies the binary operator @op@ on @exp1@ and @exp2@.
+  -- | @Bi op exp1 exp2@ represents the MiniZinc expression that applies the
+  -- binary operator @op@ on @exp1@ and @exp2@.
   | Bi Bop Expr Expr
-  -- | @U op exp1@ represents the MiniZinc expression that applies the unary operator @op@ on @exp1@.
+  -- | @U op exp1@ represents the MiniZinc expression that applies the unary
+  -- operator @op@ on @exp1@.
   | U Uop Expr
-  -- | @Call name args@ represents a call to the function or test @name@ on arguments @args@.
+  -- | @Call name args@ represents a call to the function or test @name@ on
+  -- arguments @args@.
   | Call Func [Expr]
-  -- | The if-then-else conditional. If the first argument of the constructor is an empty list, the translation to MiniZinc will fail.
-  -- @ITE [(cond, expr1)] expr2@, where the list is a singleton, translates to @if cond then exp1 else exp2 endif@.
-  -- If the list contains more than one pairs, then the corresponding @elseif-then@ pairs are inserted before the final @else@ expression.
+  -- | The if-then-else conditional. If the first argument of the constructor is
+  -- an empty list, the translation to MiniZinc will fail.  @ITE [(cond, expr1)]
+  -- expr2@, where the list is a singleton, translates to @if cond then exp1
+  -- else exp2 endif@.  If the list contains more than one pairs, then the
+  -- corresponding @elseif-then@ pairs are inserted before the final @else@
+  -- expression.
   | ITE [(Expr, Expr)] Expr
-  -- | @let-in@ expression. In @Let items expr@, the elements of @items@ represent the bindings in the @expr@ expression. Although @items@
-  -- is of type @[Items]@, only @Item@ values constructed by @Declare@ and @Constraint@ will translate to a syntactically correct
-  -- MiniZinc let expression.
+  -- | @let-in@ expression. In @Let items expr@, the elements of @items@
+  -- represent the bindings in the @expr@ expression. Although @items@ is of type
+  -- @[Items]@, only @Item@ values constructed by @Declare@ and @Constraint@
+  -- will translate to a syntactically correct MiniZinc let expression.
   | Let [Item] Expr
   -- | A generator call expression.
-  | GenCall Func CompTail Expr 
+  | GenCall Func CompTail Expr
   deriving Eq
 
 -- | The type of a MiniZinc's type representation.
@@ -164,13 +182,14 @@ data VarType
   | String
   -- | @Set t@ translates to @set of t@.
   | Set VarType
-  -- | @Array ts ti@ translates to @array [ts] of ti@. 
+  -- | @Array ts ti@ translates to @array [ts] of ti@.
   | Array [VarType] TypeInst
   -- | The list type
   | List TypeInst
   -- | Option type
   | Opt VarType
-  -- | A constrained type using the integer range. @Range a b@ translates to @a .. b@.
+  -- | A constrained type using the integer range. @Range a b@ translates to
+  -- @a .. b@.
   | Range Expr Expr
   -- | A constrained type using set literals.
   | Elems [Expr]
@@ -179,8 +198,9 @@ data VarType
   | Any
   deriving Eq
 
--- | The type of MiniZinc binary operators' representation. Next to each constructor is indicated the operator it represents.
 data Bop 
+-- | The type of MiniZinc binary operators' representation. Next to each
+-- constructor is indicated the operator it represents.
   -- Comparison
   = Gt  -- ^ @>@
   | Lt  -- ^ @<@
@@ -222,8 +242,9 @@ data Bop
   | AsFunc Bop
   deriving Eq
 
--- | Represents MiniZinc unary operators. Next to each constructor is indicated the operator it represents.  
 data Uop 
+-- | Represents MiniZinc unary operators. Next to each constructor is indicated
+-- the operator it represents.
   = Not     -- ^ @not@
   | UPlus   -- ^ @+@
   | UMinus  -- ^ @-@
@@ -235,8 +256,8 @@ data Func
   | PrefBop Bop
   deriving Eq
 
--- | User defined function, test or predicate in MiniZinc. The argument of this constructor
--- is the name of the function.
+-- | User defined function, test or predicate in MiniZinc. The argument of this
+-- constructor is the name of the function.
 userD :: Ident -> Func
 userD = CName
 
@@ -330,7 +351,7 @@ data Inst
   | Dec -- ^ A @var@ instantiation in MiniZinc.
   deriving Eq
 
--- | The type for representing the three different kinds of solve items. 
+-- | The type for representing the three different kinds of solve items.
 data Solve
   = Satisfy
   | Minimize Expr

@@ -34,8 +34,10 @@ import System.Info
 testModelWithData
   :: MZModel  -- ^ The model
   -> MZModel  -- ^ The data to be used by the model
-  -> FilePath -- ^ Path of the file in which the FlatZinc translation will be printed (without ".fzn" extension)
-  -> Int      -- ^ Chosen solver (@1@ for the G12/FD built-in solver or @2@ for choco3)
+  -> FilePath -- ^ Path of the file in which the FlatZinc translation will be
+              -- printed (without ".fzn" extension)
+  -> Int      -- ^ Chosen solver (@1@ for the G12/FD built-in solver or @2@ for
+              -- choco3)
   -> Int      -- ^ Number of solutions to be returned
   -> IO (Either ParseError [Solution])
 testModelWithData model mdata path solver num = 
@@ -43,14 +45,14 @@ testModelWithData model mdata path solver num =
   in testModel (fdata ++ model) path solver num
 
 -- | Same as `testModel`, but interactive.
--- 
--- Interactively runs a constraint model and outputs its solution(s). The 
--- function first prompts the user for the working directory: the FlatZinc file 
--- will be created in that directory. Then, for a name for the constraint model: 
--- the created FlatZinc file will be named after this. Also asks the user to 
--- choose between supported solvers and the desired number of solutions. Returns 
--- either a parse error or a list of solutions of the constraint model. The length 
--- of the list is specified by the number of solutions requested.
+--
+-- Interactively runs a constraint model and outputs its solution(s). The
+-- function first prompts the user for the working directory: the FlatZinc file
+-- will be created in that directory. Then, for a name for the constraint model:
+-- the created FlatZinc file will be named after this. Also asks the user to
+-- choose between supported solvers and the desired number of solutions. Returns
+-- either a parse error or a list of solutions of the constraint model. The
+-- length of the list is specified by the number of solutions requested.
 iTestModel :: MZModel -> IO (Either ParseError [Solution])
 iTestModel m = do
   putStrLn "Enter working directory:"
@@ -68,8 +70,10 @@ iTestModel m = do
 
 -- | Runs a model and parses its solution(s).
 testModel :: MZModel -- ^ The model
-  -> FilePath        -- ^ The path of the file in which the FlatZinc translation will be printed (without ".fzn" extension)
-  -> Int             -- ^ The chosen solver (@1@ for the G12/FD built-in solver or @2@ for choco3)
+  -> FilePath        -- ^ The path of the file in which the FlatZinc translation
+                     -- will be printed (without ".fzn" extension)
+  -> Int             -- ^ The chosen solver (@1@ for the G12/FD built-in solver
+                     -- or @2@ for choco3)
   -> Int             -- ^ The number of solutions to be returned
   -> IO (Either ParseError [Solution])
 testModel m mpath s n = do

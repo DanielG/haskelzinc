@@ -7,8 +7,8 @@ License     : BSD3
 Maintainer  : Klara Marntirosian <klara.mar@cs.kuleuven.be>
 Stability   : experimental
 
-This module provides a pretty-printer of MiniZinc models represented through the "MZAST" module.
-This pretty-printer is based on the "Text.PrettyPrint" module.
+This module provides a pretty-printer of MiniZinc models represented through the
+"MZAST" module. This pretty-printer is based on the "Text.PrettyPrint" module.
 -}
 
 module Interfaces.MZPrinter(
@@ -22,8 +22,8 @@ import Text.PrettyPrint
 import Data.List
 import Interfaces.MZAST
   
--- | Prints the represented MiniZinc model. Essentially, this function applies 'printItem' on
--- each element of the specified model.
+-- | Prints the represented MiniZinc model. Essentially, this function applies
+-- 'printItem' on each element of the specified model.
 printModel :: MZModel -> Doc
 printModel = foldl1 ($+$) . map printItem
 
@@ -191,11 +191,13 @@ printSolve Satisfy      = text "satisfy"
 printSolve (Minimize e) = text "minimize" <+> printExpr e
 printSolve (Maximize e) = text "maximize" <+> printExpr e
 
--- Prints the parameters of user defined call expressions (predicates, tests and functions)
+-- Prints the parameters of user defined call expressions (predicates, tests and
+-- functions)
 printParam :: Param -> Doc
 printParam (i, t, n) = printInst i <+> printVarType t <> colon <+> text n
 
--- Horizontally concatinates Docs while also putting a comma-space (", ") in between
+-- Horizontally concatinates Docs while also putting a comma-space (", ") in
+-- between
 commaSepDoc :: [Doc] -> Doc
 commaSepDoc = hsep . punctuate comma
 
@@ -203,7 +205,8 @@ commaSepDoc = hsep . punctuate comma
 lineSepExpr :: [Expr] -> Doc
 lineSepExpr = vcat . map printExpr
 
--- First, map a function to a list and produce a list of Docs and then apply commaSepDoc
+-- First, map a function to a list and produce a list of Docs and then apply
+-- commaSepDoc
 commaSep :: (a -> Doc) -> [a] -> Doc
 commaSep f ls = commaSepDoc $ map f ls
 

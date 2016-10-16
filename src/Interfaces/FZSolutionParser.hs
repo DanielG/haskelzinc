@@ -9,9 +9,10 @@ License     : GPL-3
 Maintainer  : Klara Marntirosian <klara.mar@cs.kuleuven.be>
 Stability   : experimental
 
-This module parses the solutions outputed by the specified FlatZinc solver. It supports multiple solutions.
-The parser might fail if there is a show item in the represented MiniZinc model which alters the default 
-format of the solutions' output.
+This module parses the solutions outputed by the specified FlatZinc solver. It
+supports multiple solutions.  The parser might fail if there is a show item in
+the represented MiniZinc model which alters the default format of the solutions'
+output.
 -}
 
 module Interfaces.FZSolutionParser (
@@ -33,8 +34,8 @@ import Text.Parsec.String (Parser)
 --import GHC.Generics
 --import Control.DeepSeq
 
--- | A Solution consists of a list of pairs. Each pair represents an assignment of a value to
--- a decision variable of the constraint model.
+-- | A Solution consists of a list of pairs. Each pair represents an assignment
+-- of a value to a decision variable of the constraint model.
 type Solution = [(String, MValue)]
 
 -- | Representation of returned values.
@@ -48,29 +49,29 @@ data MValue = MError String
   deriving Show
   --deriving (Show, Generic, NFData)
 
--- | Returns either a parse error or a list of solutions of the constraint model, parsed from 
--- the file where they are printed. The length of the list is specified by the second argument 
--- of the function.
+-- | Returns either a parse error or a list of solutions of the constraint
+-- model, parsed from the file where they are printed. The length of the list is
+-- specified by the second argument of the function.
 getSolutionFromFile :: FilePath -> Int -> IO (Either ParseError [Solution])
 getSolutionFromFile path n = do
   output <- readFile path
   return $ runParser (trySolutions n) output
 
--- | Prints either a parse error or a list of solutions of the constraint model parsed from 
--- a file where they are printed. The length of the list is sepcified by the second argument 
--- of the function.
+-- | Prints either a parse error or a list of solutions of the constraint model
+-- parsed from a file where they are printed. The length of the list is
+-- sepcified by the second argument of the function.
 printSolutionFromFile :: Int -> FilePath -> IO ()
 printSolutionFromFile n path = do
   output <- readFile path
   print $ runParser (trySolutions n) output
 
--- | Same as @getSolutionFromFile@ but parses the string argument of the function instead
--- of the contents of a file.
+-- | Same as @getSolutionFromFile@ but parses the string argument of the function
+-- instead of the contents of a file.
 getSolution :: Int -> String -> Either ParseError [Solution]
 getSolution n = runParser (trySolutions n)
 
--- | Same as @printSolutionFromFile@ but parses the string argument of the function instead
--- of the contents of a file.
+-- | Same as @printSolutionFromFile@ but parses the string argument of the
+-- function instead of the contents of a file.
 printSolution :: Int -> String -> IO ()
 printSolution n = print . runParser (trySolutions n)
 
