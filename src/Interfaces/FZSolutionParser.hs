@@ -84,7 +84,7 @@ trySolutions :: Int -> Parser [Solution]
 trySolutions n = (try (takeSolutions n) <|> (unsat >> return [[]]))
 
 unsat :: Parser String
-unsat = skipMany comment *> (string "=====UNSATISFIABLE=====") <* endOfLine <* many comment
+unsat = skipMany comment *> string "=====UNSATISFIABLE=====" <* endOfLine <* many comment
 
 takeSolutions :: Int -> Parser [Solution]
 takeSolutions n = take n <$> (solutions)
@@ -97,7 +97,7 @@ solution = (many $ (skipMany comment) *> (assigned >>= return))
                    <* string "----------" <* endOfLine
 
 comment :: Parser String
-comment = char '%' *> (manyTill anyToken endOfLine) *> return ""
+comment = char '%' *> manyTill anyToken endOfLine *> return ""
 
 assigned :: Parser (String, MValue)
 assigned = do
