@@ -22,6 +22,7 @@ description:
     The haskelzinc library defines an interface to the MiniZinc 2.0 constraint proramming language. It provides a Haskell abstract syntax tree for the MiniZinc language, with which one can represent MiniZinc models in Haskell, a pretty printer to print the representation of a MiniZinc model in MiniZinc and a parser that returns a representation of the solutions obtained by running the MiniZinc model.
     .
     An additional module gives the possibility to directly get the solutions of a MiniZinc finite domain model. Option for interactive interface is provided, as well as choice between two solvers: the G12/FD built-in solver of FlatZinc and choco3.   
+homepage:            https://github.com/GRACeFUL-project/haskelzinc
 
 -- The license under which the package is released.
 license:             BSD3
@@ -72,3 +73,7 @@ library
   -- Base language which the package is written in.
   default-language:    Haskell2010
   
+
+source-repository head
+  type:              git
+  location:          https://github.com/GRACeFUL-project/haskelzinc.git
