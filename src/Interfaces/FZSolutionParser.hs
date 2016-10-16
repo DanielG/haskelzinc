@@ -26,8 +26,8 @@ module Interfaces.FZSolutionParser (
 import Data.Char
 import Control.Applicative
 import qualified Data.Set as S
-import qualified Text.Parsec as P
-import qualified Text.Parsec.Char as C
+import Text.Parsec as P hiding ((<|>), many, runParser)
+import Text.Parsec.Char
 import Text.Parsec.String (Parser)
 -- Next two modules for testing only
 --import GHC.Generics
@@ -51,7 +51,7 @@ data MValue = MError String
 -- | Returns either a parse error or a list of solutions of the constraint model, parsed from 
 -- the file where they are printed. The length of the list is specified by the second argument 
 -- of the function.
-getSolutionFromFile :: FilePath -> Int -> IO (Either P.ParseError [Solution])
+getSolutionFromFile :: FilePath -> Int -> IO (Either ParseError [Solution])
 getSolutionFromFile path n = do
   output <- readFile path
   return $ runParser (trySolutions n) output
@@ -66,7 +66,7 @@ printSolutionFromFile n path = do
 
 -- | Same as @getSolutionFromFile@ but parses the string argument of the function instead
 -- of the contents of a file.
-getSolution :: Int -> String -> Either P.ParseError [Solution]
+getSolution :: Int -> String -> Either ParseError [Solution]
 getSolution n = runParser (trySolutions n)
 
 -- | Same as @printSolutionFromFile@ but parses the string argument of the function instead
@@ -74,53 +74,9 @@ getSolution n = runParser (trySolutions n)
 printSolution :: Int -> String -> IO ()
 printSolution n = print . runParser (trySolutions n)
 
--- Auxiliary definitions
-digit :: Parser Char
-digit = C.digit
-  
-anyChar :: Parser Char
-anyChar = C.anyChar
-
-char :: Char -> Parser Char
-char = C.char
-
-sepBy :: Parser a -> Parser b -> Parser [a]
-sepBy = P.sepBy
-
-between :: Parser a -> Parser b -> Parser c -> Parser c
-between = P.between
-
-manyTill :: Parser a -> Parser b -> Parser [a]
-manyTill = P.manyTill
-
-many1 :: Parser a -> Parser [a]
-many1 = P.many1
-
-skipMany :: Parser a -> Parser ()
-skipMany = P.skipMany
-
-anyToken = P.anyToken
-
-eof :: Parser ()
-eof = P.eof
-
-endOfLine :: Parser Char
-endOfLine = C.endOfLine
-
-string :: String -> Parser String
-string = C.string
-
-spaces :: Parser ()
-spaces = C.spaces
-
-parse :: Parser a -> P.SourceName -> String -> Either P.ParseError a
-parse = P.parse
-
-try :: Parser a -> Parser a
-try = P.try
 -----------------------
 
-runParser :: Parser a -> String -> Either P.ParseError a
+runParser :: Parser a -> String -> Either ParseError a
 runParser p = parse (p <* eof) ""
 
 trySolutions :: Int -> Parser [Solution]
@@ -151,7 +107,7 @@ assigned = do
   return (name, value)
 
 varName :: Parser String
-varName = manyTill (C.noneOf "-=%") ((C.space >> char '=' >> C.space) <|> char '=')
+varName = manyTill (noneOf "-=%") ((space >> char '=' >> space) <|> char '=')
 
 valueParser :: Parser MValue
 valueParser = try floatM <|> intM <|> boolM <|> (setM scalar) <|> (array scalar) <|> stringM
@@ -205,7 +161,7 @@ array p = do
   return (fixDims ls es)
 
 natural :: Parser Int
-natural = P.chainl1 digitValue ascendDecimal
+natural = chainl1 digitValue ascendDecimal
 
 opposite :: Parser Int
 opposite = (0 - ) <$> natural
